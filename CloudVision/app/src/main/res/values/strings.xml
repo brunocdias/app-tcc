@@ -14,12 +14,11 @@
 
 
 
-    <string name="hello_world">Hello world!</string>
-    <string name="speech_prompt">Say something&#8230;</string>
-    <string name="speech_not_supported">Sorry! Your device doesn\'t support speech input</string>
+    <string name="speech_prompt">Fale alguma coisa&#8230;</string>
+    <string name="speech_not_supported">Desculpe! Seu aparelho não suporta entrada de fala</string>
 
 
-    <string name="resultado">Foi encontrado:</string>
+    <string name="resultado">Foi encontrado a palavra em inglês:</string>
     <string name="btn_resultado">Tradução</string>
     <string name="fala">Repita três vezes a palavra clicando no microfone para falar</string>
 

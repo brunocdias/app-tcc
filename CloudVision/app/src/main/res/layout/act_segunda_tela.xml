@@ -27,16 +27,16 @@
         app:layout_constraintTop_toTopOf="@+id/txtResultado" />
 
     <TextView
-            android:id="@+id/txtSource"
-            android:layout_width="125dp"
-            android:layout_height="35dp"
-            android:textSize="20sp"
+        android:id="@+id/txtSource"
+        android:layout_width="210dp"
+        android:layout_height="35dp"
         android:layout_marginStart="28dp"
-        tools:layout_constraintTop_creator="1"
         android:layout_marginTop="136dp"
-        tools:layout_constraintLeft_creator="1"
+        android:textSize="20sp"
+        app:layout_constraintLeft_toRightOf="@+id/btnResultado"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toRightOf="@+id/btnResultado" />
+        tools:layout_constraintLeft_creator="1"
+        tools:layout_constraintTop_creator="1" />
 
 
 

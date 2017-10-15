@@ -5,7 +5,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Handler;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -13,10 +12,7 @@ import com.google.cloud.translate.Translate;
 import com.google.cloud.translate.TranslateOptions;
 import com.google.cloud.translate.Translation;
 
-
 import java.util.ArrayList;
-import java.util.Locale;
-
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -28,7 +24,7 @@ import android.widget.Toast;
 
 public class ActSegundaTela extends AppCompatActivity {
 
-    private static final String API_KEY = "AIzaSyC21FofG11ZZI677OEHvCwUczFuEMwElpE";
+    private static final String API_KEY = "";
 
     private TextView txtTarget;
     private TextView txtSource;
@@ -39,6 +35,8 @@ public class ActSegundaTela extends AppCompatActivity {
     private ImageButton btnSpeak01;
     private ImageButton btnSpeak02;
     private ImageButton btnSpeak03;
+    int tentativa = 1; //primeira segunda terceira
+    int qtd = 0; //qtd de acertos
     boolean botao1=false, botao2=false, botao3=false;
 
     private final int REQ_CODE_SPEECH_INPUT = 100;
@@ -58,7 +56,6 @@ public class ActSegundaTela extends AppCompatActivity {
         btnSpeak02 = (ImageButton) findViewById(R.id.btnSpeak02);
         btnSpeak03 = (ImageButton) findViewById(R.id.btnSpeak03);
 
-
         Bundle bundle = getIntent().getExtras();
         String word = "";
         if(bundle.containsKey("Name")){
@@ -70,8 +67,6 @@ public class ActSegundaTela extends AppCompatActivity {
         final String finalWord = word;
         btnResultado.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
-
 
                 new AsyncTask<Void, Void, Void>() {
                     @Override
@@ -93,35 +88,70 @@ public class ActSegundaTela extends AppCompatActivity {
             }
         });
 
-        btnSpeak01.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                botao1 = true;
-                promptSpeechInput();
-            }
-        });
-
-        btnSpeak02.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                botao2=true;
-                promptSpeechInput();
-            }
-        });
-
-        btnSpeak03.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                botao3=true;
-                promptSpeechInput();
-            }
-        });
+        attempt(tentativa);
     }
 
-    //BOTAO 01
+    //metodo pra intercalar os botoes de speech
+    private void attempt(int t) {
+
+        tentativa = t;
+
+        if (tentativa == 1) {
+            btnSpeak02.setEnabled(false);
+            btnSpeak02.setBackgroundResource(R.drawable.mic_desativado);
+            btnSpeak03.setEnabled(false);
+            btnSpeak03.setBackgroundResource(R.drawable.mic_desativado);
+
+            btnSpeak01.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    botao1 = true;
+                    promptSpeechInput();
+                }
+            });
+        }else
+
+            if (tentativa == 2) {
+
+                btnSpeak02.setEnabled(true);
+                btnSpeak02.setBackgroundResource(R.drawable.ico_mic);
+                btnSpeak01.setEnabled(false);
+                btnSpeak01.setBackgroundResource(R.drawable.mic_desativado);
+                btnSpeak03.setEnabled(false);
+                btnSpeak03.setBackgroundResource(R.drawable.mic_desativado);
+
+                btnSpeak02.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        botao2 = true;
+                        promptSpeechInput();
+                    }
+                });
+            }else
+                if(tentativa == 3){
+
+                        btnSpeak03.setEnabled(true);
+                        btnSpeak03.setBackgroundResource(R.drawable.ico_mic);
+                        btnSpeak01.setEnabled(false);
+                        btnSpeak01.setBackgroundResource(R.drawable.mic_desativado);
+                        btnSpeak02.setEnabled(false);
+                        btnSpeak02.setBackgroundResource(R.drawable.mic_desativado);
+
+                        btnSpeak03.setOnClickListener(new View.OnClickListener() {
+
+                            @Override
+                            public void onClick(View v) {
+                                botao3=true;
+                                promptSpeechInput();
+                            }
+                        });
+                }
+
+
+    }
+
     /**
      * Showing google speech input dialog
      * */
@@ -129,7 +159,7 @@ public class ActSegundaTela extends AppCompatActivity {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en-US");
         intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
                 getString(R.string.speech_prompt));
         try {
@@ -159,33 +189,114 @@ public class ActSegundaTela extends AppCompatActivity {
                         txtFala01.setText(result.get(0));
                         botao1=false;
                         if(target.equals(result.get(0))){
+                            txtFala01.setTextColor(Color.GREEN);
                             AlertDialog alertDialog;
                             alertDialog = new AlertDialog.Builder(this).create();
-                            alertDialog.setTitle("Você acertou!!");
-                            alertDialog.setMessage("Parabéns, continue treinando. Aqui está sua recompensa:");
+                            alertDialog.setTitle("Medalha de bronze!");
+                            alertDialog.setMessage("Parabéns, continue treinando.");
                             alertDialog.setIcon(R.drawable.bronze);
                             alertDialog.show();
-                            txtFala01.setTextColor(Color.GREEN);
-                        } else
-                            txtFala01.setTextColor(Color.RED);
+                            qtd ++;
+                            attempt(2);
+                        }else
+                            {
+                                txtFala01.setTextColor(Color.RED);
+                                AlertDialog alertDialog;
+                                alertDialog = new AlertDialog.Builder(this).create();
+                                alertDialog.setTitle("Você errou.");
+                                alertDialog.setMessage("Não desista, continue treinando.");
+                                alertDialog.setIcon(R.drawable.emoji_triste);
+                                alertDialog.show();
+                                attempt(2);
+                            }
                     }
                     else
                         if(botao2){
                             txtFala02.setText(result.get(0));
                             botao2 = false;
                             if(target.equals(result.get(0))){
-                                txtFala02.setTextColor(Color.GREEN);
+                                switch (qtd) {
+                                    case 0:
+                                        txtFala02.setTextColor(Color.GREEN);
+                                        AlertDialog alertDialog1;
+                                        alertDialog1 = new AlertDialog.Builder(this).create();
+                                        alertDialog1.setTitle("Medalha de bronze!");
+                                        alertDialog1.setMessage("Parabéns, continue treinando.");
+                                        alertDialog1.setIcon(R.drawable.bronze);
+                                        alertDialog1.show();
+                                        qtd ++;
+                                        attempt(3);
+                                    case 1:
+                                        txtFala02.setTextColor(Color.GREEN);
+                                        AlertDialog alertDialog2;
+                                        alertDialog2 = new AlertDialog.Builder(this).create();
+                                        alertDialog2.setTitle("Medalha de prata!");
+                                        alertDialog2.setMessage("Parabéns, continue treinando.");
+                                        alertDialog2.setIcon(R.drawable.prata);
+                                        alertDialog2.show();
+                                        qtd ++;
+                                        attempt(3);
+                                }
                             } else
-                                txtFala02.setTextColor(Color.RED);
+                                {
+                                    txtFala02.setTextColor(Color.RED);
+                                    AlertDialog alertDialog;
+                                    alertDialog = new AlertDialog.Builder(this).create();
+                                    alertDialog.setTitle("Você errou.");
+                                    alertDialog.setMessage("Não desista, continue treinando.");
+                                    alertDialog.setIcon(R.drawable.emoji_triste);
+                                    alertDialog.show();
+                                    attempt(3);
+                                }
                         }
                         else
                             if(botao3){
                                 txtFala03.setText(result.get(0));
                                 botao3 = false;
                                 if(target.equals(result.get(0))){
-                                    txtFala03.setTextColor(Color.GREEN);
+                                    switch (qtd) {
+                                        case 0:
+                                            txtFala03.setTextColor(Color.GREEN);
+                                            AlertDialog alertDialog1;
+                                            alertDialog1 = new AlertDialog.Builder(this).create();
+                                            alertDialog1.setTitle("Medalha de bronze!");
+                                            alertDialog1.setMessage("Parabéns, continue treinando.");
+                                            alertDialog1.setIcon(R.drawable.bronze);
+                                            alertDialog1.show();
+                                            qtd ++;
+                                            break;
+                                        case 1:
+                                            txtFala03.setTextColor(Color.GREEN);
+                                            AlertDialog alertDialog2;
+                                            alertDialog2 = new AlertDialog.Builder(this).create();
+                                            alertDialog2.setTitle("Medalha de prata!");
+                                            alertDialog2.setMessage("Parabéns, continue treinando.");
+                                            alertDialog2.setIcon(R.drawable.prata);
+                                            alertDialog2.show();
+                                            qtd ++;
+                                            break;
+                                        case 2:
+                                            txtFala03.setTextColor(Color.GREEN);
+                                            AlertDialog alertDialog3;
+                                            alertDialog3 = new AlertDialog.Builder(this).create();
+                                            alertDialog3.setTitle("Medalha de ouro!");
+                                            alertDialog3.setMessage("Parabéns, você acertou todas.");
+                                            alertDialog3.setIcon(R.drawable.prata);
+                                            alertDialog3.show();
+                                            qtd ++;
+                                            break;
+                                    }
                                 } else
-                                    txtFala03.setTextColor(Color.RED);
+                                    {
+                                        txtFala03.setTextColor(Color.RED);
+                                        AlertDialog alertDialog;
+                                        alertDialog = new AlertDialog.Builder(this).create();
+                                        alertDialog.setTitle("Você errou.");
+                                        alertDialog.setMessage("Não desista, continue treinando.");
+                                        alertDialog.setIcon(R.drawable.emoji_triste);
+                                        alertDialog.show();
+                                        attempt(3);
+                                    }
                             }
                 }
                 break;
