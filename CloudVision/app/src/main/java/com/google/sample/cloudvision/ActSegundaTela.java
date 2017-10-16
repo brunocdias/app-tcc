@@ -1,5 +1,6 @@
 package com.google.sample.cloudvision;
 
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -61,12 +62,14 @@ public class ActSegundaTela extends AppCompatActivity {
         if(bundle.containsKey("Name")){
             word = (String) bundle.getString("Name");
             txtTarget.setText(word);
-            //envia para o translate api para traduzir a palavra pro portugues
         }
 
         final String finalWord = word;
         btnResultado.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+
+                btnResultado.setEnabled(false);
+                txtSource.setText("Traduzindo, aguarde...");
 
                 new AsyncTask<Void, Void, Void>() {
                     @Override
@@ -97,6 +100,12 @@ public class ActSegundaTela extends AppCompatActivity {
         tentativa = t;
 
         if (tentativa == 1) {
+            txtFala01.setText("");
+            txtFala02.setText("");
+            txtFala03.setText("");
+
+            btnSpeak01.setEnabled(true);
+            btnSpeak01.setBackgroundResource(R.drawable.ico_mic);
             btnSpeak02.setEnabled(false);
             btnSpeak02.setBackgroundResource(R.drawable.mic_desativado);
             btnSpeak03.setEnabled(false);
@@ -257,45 +266,98 @@ public class ActSegundaTela extends AppCompatActivity {
                                     switch (qtd) {
                                         case 0:
                                             txtFala03.setTextColor(Color.GREEN);
-                                            AlertDialog alertDialog1;
-                                            alertDialog1 = new AlertDialog.Builder(this).create();
+                                            AlertDialog.Builder alertDialog1 = new AlertDialog.Builder(this);
                                             alertDialog1.setTitle("Medalha de bronze!");
-                                            alertDialog1.setMessage("Parabéns, continue treinando.");
+                                            alertDialog1.setMessage("Parabéns, deseja continuar treinando?");
                                             alertDialog1.setIcon(R.drawable.bronze);
+                                            alertDialog1.setNegativeButton("Não", new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface arg0, int arg1) {
+                                                    //primeira tela
+                                                    Intent it = new Intent(ActSegundaTela.this, MainActivity.class);
+                                                    startActivity(it);
+                                                }
+                                            });
+                                            alertDialog1.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface arg0, int arg1) {
+                                                    attempt(1);
+                                                }
+                                            });
+                                            alertDialog1.create();
                                             alertDialog1.show();
-                                            qtd ++;
+                                            btnSpeak03.setEnabled(false);
+                                            btnSpeak03.setBackgroundResource(R.drawable.mic_desativado);
                                             break;
                                         case 1:
                                             txtFala03.setTextColor(Color.GREEN);
-                                            AlertDialog alertDialog2;
-                                            alertDialog2 = new AlertDialog.Builder(this).create();
+                                            AlertDialog.Builder alertDialog2 = new AlertDialog.Builder(this);
                                             alertDialog2.setTitle("Medalha de prata!");
-                                            alertDialog2.setMessage("Parabéns, continue treinando.");
+                                            alertDialog2.setMessage("Parabéns, você quase acertou tudo, dejesa continuar treinando?");
                                             alertDialog2.setIcon(R.drawable.prata);
+                                            alertDialog2.setNegativeButton("Não", new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface arg0, int arg1) {
+                                                    //primeira tela
+                                                    Intent it = new Intent(ActSegundaTela.this, MainActivity.class);
+                                                    startActivity(it);
+                                                }
+                                            });
+                                            alertDialog2.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface arg0, int arg1) {
+                                                    attempt(1);
+                                                }
+                                            });
+                                            alertDialog2.create();
                                             alertDialog2.show();
-                                            qtd ++;
+                                            btnSpeak03.setEnabled(false);
+                                            btnSpeak03.setBackgroundResource(R.drawable.mic_desativado);
                                             break;
                                         case 2:
                                             txtFala03.setTextColor(Color.GREEN);
-                                            AlertDialog alertDialog3;
-                                            alertDialog3 = new AlertDialog.Builder(this).create();
+                                            AlertDialog.Builder alertDialog3 = new AlertDialog.Builder(this);
                                             alertDialog3.setTitle("Medalha de ouro!");
-                                            alertDialog3.setMessage("Parabéns, você acertou todas.");
-                                            alertDialog3.setIcon(R.drawable.prata);
+                                            alertDialog3.setMessage("Parabéns, você acertou todas." +
+                                                    "Deseja pesquisar uma nova imagem?");
+                                            alertDialog3.setIcon(R.drawable.ouro);
+                                            alertDialog3.setNegativeButton("Não", new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface arg0, int arg1) {
+
+                                                }
+                                            });
+                                            alertDialog3.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface arg0, int arg1) {
+                                                    //primeira tela
+                                                    Intent it = new Intent(ActSegundaTela.this, MainActivity.class);
+                                                    startActivity(it);
+                                                }
+                                            });
+                                            alertDialog3.create();
                                             alertDialog3.show();
-                                            qtd ++;
+                                            btnSpeak03.setEnabled(false);
+                                            btnSpeak03.setBackgroundResource(R.drawable.mic_desativado);
                                             break;
                                     }
                                 } else
                                     {
                                         txtFala03.setTextColor(Color.RED);
-                                        AlertDialog alertDialog;
-                                        alertDialog = new AlertDialog.Builder(this).create();
-                                        alertDialog.setTitle("Você errou.");
-                                        alertDialog.setMessage("Não desista, continue treinando.");
+                                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+                                        alertDialog.setTitle("Você errou todas as pronuncias.");
+                                        alertDialog.setMessage("Deseja refazer?");
                                         alertDialog.setIcon(R.drawable.emoji_triste);
+                                        alertDialog.setNegativeButton("Não", new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface arg0, int arg1) {
+                                                //primeira tela
+                                                Intent it = new Intent(ActSegundaTela.this, MainActivity.class);
+                                                startActivity(it);
+                                            }
+                                        });
+                                        alertDialog.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface arg0, int arg1) {
+                                                attempt(1);
+                                            }
+                                        });
+                                        alertDialog.create();
                                         alertDialog.show();
-                                        attempt(3);
+                                        btnSpeak03.setEnabled(false);
+                                        btnSpeak03.setBackgroundResource(R.drawable.mic_desativado);
                                     }
                             }
                 }
