@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">App_TCC</string>
+    <string name="app_name">ImageMundo</string>
     <string name="action_settings">Configurações</string>
     <string name="image_details_header">Detalhes:</string>
     <string name="image_preview_header">Preview:</string>

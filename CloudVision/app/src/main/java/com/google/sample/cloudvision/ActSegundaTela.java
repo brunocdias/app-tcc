@@ -22,11 +22,16 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import java.util.Locale;
+import android.speech.tts.TextToSpeech;
+import android.util.Log;
 
-public class ActSegundaTela extends AppCompatActivity {
+public class ActSegundaTela extends AppCompatActivity  implements TextToSpeech.OnInitListener {
 
-    private static final String API_KEY = "";
+    private static final String API_KEY = "AIzaSyB1DITmOdgzd8L2pC4MI1hoHFm7OCrtbac";
 
+    private TextToSpeech tts;
+    private ImageButton speaker;
     private TextView txtTarget;
     private TextView txtSource;
     private Button btnResultado;
@@ -47,6 +52,8 @@ public class ActSegundaTela extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act_segunda_tela);
 
+        tts = new TextToSpeech(this, this);
+        speaker = (ImageButton) findViewById(R.id.speaker);
         txtTarget = (TextView) findViewById(R.id.txtTarget);
         txtSource = (TextView) findViewById(R.id.txtSource);
         btnResultado = (Button) findViewById(R.id.btnResultado);
@@ -66,7 +73,7 @@ public class ActSegundaTela extends AppCompatActivity {
 
         final String finalWord = word;
         btnResultado.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+            public void onClick(View v){
 
                 btnResultado.setEnabled(false);
                 txtSource.setText("Traduzindo, aguarde...");
@@ -92,6 +99,52 @@ public class ActSegundaTela extends AppCompatActivity {
         });
 
         attempt(tentativa);
+
+        speaker.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                speakOut();
+            }
+
+        });
+    }
+
+    public void onDestroy() {
+        // Don't forget to shutdown tts!
+        if (tts != null) {
+            tts.stop();
+            tts.shutdown();
+        }
+        super.onDestroy();
+    }
+
+    @Override
+    public void onInit(int status) {
+
+        if (status == TextToSpeech.SUCCESS) {
+
+            int result = tts.setLanguage(Locale.US);
+
+            if (result == TextToSpeech.LANG_MISSING_DATA
+                    || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                Log.e("TTS", "This Language is not supported");
+            } else {
+                speaker.setEnabled(true);
+                speakOut();
+            }
+
+        } else {
+            Log.e("TTS", "Initilization Failed!");
+        }
+
+    }
+
+    private void speakOut() {
+
+        String text = txtTarget.getText().toString();
+
+        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
     }
 
     //metodo pra intercalar os botoes de speech
